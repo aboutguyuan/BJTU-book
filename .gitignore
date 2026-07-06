@@ -3,5 +3,6 @@ dist
 .vercel
 .env
 .env.*
+.qiniu
 .DS_Store
 npm-debug.log*

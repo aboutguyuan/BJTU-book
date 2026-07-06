@@ -7,6 +7,8 @@
   "scripts": {
     "chapters": "node tools/split-chapters.mjs",
     "build": "node tools/build.mjs",
+    "kodo:config": "node tools/kodo-config.mjs",
+    "kodo:deploy": "npm run build && npm run kodo:config && qshell qupload -c 5 .qiniu/qupload.json",
     "dev": "node tools/serve.mjs",
     "preview": "node tools/serve.mjs dist"
   }
