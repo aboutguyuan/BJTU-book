@@ -267,5 +267,6 @@ await copyFile(path.join(root, "style.css"), path.join(distPath, "style.css"));
 await copyFile(path.join(root, "app.js"), path.join(distPath, "app.js"));
 await writeFile(path.join(root, "data.js"), dataJs);
 await writeFile(path.join(distPath, "data.js"), dataJs);
+await writeFile(path.join(distPath, ".nojekyll"), "");
 
 console.log(`Built ${siteData.chapters.length} chapters into dist/`);
