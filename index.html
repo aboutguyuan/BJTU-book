@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="北京交通大学生存手册：一份原创、非官方、务实清醒的学生生存指南。">
+    <title>北京交通大学生存手册</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="回到首页">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>BJTU / SURVIVAL MANUAL</span>
+        </a>
+        <nav class="header-nav" aria-label="顶部导航">
+          <a href="#contents">CONTENTS</a>
+          <a href="https://github.com/aboutguyuan" target="_blank" rel="noreferrer">AUTHOR</a>
+          <a href="https://github.com/aboutguyuan/BJTU-book" target="_blank" rel="noreferrer">GITHUB</a>
+        </nav>
+        <div class="header-actions">
+          <button class="tool-button menu-toggle" type="button" aria-label="打开目录" title="目录">☰</button>
+          <button class="tool-button search-focus" type="button" aria-label="搜索" title="搜索">⌕</button>
+          <button class="tool-button copy-link" type="button" aria-label="复制当前章节链接" title="复制链接">⧉</button>
+        </div>
+      </header>
+
+      <aside class="lesson-sidebar" aria-label="章节目录">
+        <div class="sidebar-inner">
+          <div class="sidebar-section-title" id="contents">CONTENTS</div>
+          <nav id="chapterNav"></nav>
+        </div>
+      </aside>
+
+      <div class="mobile-drawer" aria-hidden="true">
+        <div class="drawer-panel">
+          <div class="drawer-head">
+            <span>CONTENTS</span>
+            <button class="tool-button drawer-close" type="button" aria-label="关闭目录">×</button>
+          </div>
+          <nav id="mobileChapterNav"></nav>
+        </div>
+      </div>
+
+      <main class="lesson-main" id="top">
+        <article class="lesson-content">
+          <section class="manual-cover" aria-labelledby="manualTitle">
+            <div class="cover-rule"></div>
+            <div class="cover-meta-row">
+              <p class="kicker">FIG_000 · 原创学生指南 · 2026</p>
+              <a class="author-chip" href="https://github.com/aboutguyuan" target="_blank" rel="noreferrer" aria-label="作者 GitHub 主页">
+                <img src="https://github.com/aboutguyuan.png?size=80" alt="aboutguyuan 的 GitHub 头像">
+                <span>aboutguyuan</span>
+              </a>
+            </div>
+            <div class="cover-grid">
+              <div class="cover-copy">
+                <h1 id="manualTitle">
+                  <span class="title-en">BJTU SURVIVAL</span>
+                  <span class="title-cn">北京交通大学<br>生存手册</span>
+                </h1>
+                <p class="cover-summary">一份原创、非官方、非宣传、非鸡汤的学生生存指南。先把大学里的信息、规则、路径和选择讲清楚，再进入具体章节。</p>
+                <p class="cover-note">涉及学籍、选课、成绩、毕业、推免、就业手续、校区调整等事项，请以学校、学院和辅导员正式通知为准。</p>
+                <div class="cover-actions" aria-label="封面操作">
+                  <a class="cover-button primary" href="#写在前面这不是一本让你舒服的手册">进入手册</a>
+                  <a class="cover-button" href="https://github.com/aboutguyuan/BJTU-book" target="_blank" rel="noreferrer">GitHub 项目</a>
+                  <a class="cover-button" href="https://github.com/aboutguyuan" target="_blank" rel="noreferrer">作者主页</a>
+                </div>
+              </div>
+              <aside class="author-card" aria-label="作者信息">
+                <div class="author-card-copy">
+                  <span>AUTHOR</span>
+                  <strong>aboutguyuan</strong>
+                  <a href="https://github.com/aboutguyuan" target="_blank" rel="noreferrer">github.com/aboutguyuan</a>
+                </div>
+                <div class="author-stats">
+                  <span>PROJECT</span>
+                  <strong>BJTU-book</strong>
+                </div>
+              </aside>
+            </div>
+            <div class="meta-grid" aria-label="项目信息">
+              <a href="https://github.com/aboutguyuan" target="_blank" rel="noreferrer">
+                <span>AUTHOR</span>
+                <strong>github.com/aboutguyuan</strong>
+              </a>
+              <a href="https://github.com/aboutguyuan/BJTU-book" target="_blank" rel="noreferrer">
+                <span>PROJECT</span>
+                <strong>aboutguyuan/BJTU-book</strong>
+              </a>
+              <div>
+                <span>SOURCE</span>
+                <strong>原创手册 / Markdown 构建</strong>
+              </div>
+            </div>
+            <div class="search-box">
+              <label for="manualSearch">SEARCH MANUAL</label>
+              <input id="manualSearch" type="search" placeholder="搜索章节、小节或正文关键词">
+            </div>
+            <div class="search-results" id="searchResults" aria-live="polite"></div>
+          </section>
+
+          <div id="manualContent"></div>
+        </article>
+      </main>
+
+      <aside class="page-toc" aria-label="当前页目录">
+        <div class="page-toc-title">ON THIS PAGE</div>
+        <nav id="pageToc"></nav>
+      </aside>
+    </div>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
