@@ -286,6 +286,7 @@ h1 {
   display: block;
   font-family: var(--font-display);
   font-size: clamp(72px, 7.8vw, 122px);
+  line-height: 1.08;
 }
 
 .cover-summary {
