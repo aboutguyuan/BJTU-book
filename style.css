@@ -635,7 +635,8 @@ hr.pagebreak {
 
 @media (max-width: 900px) {
   body {
-    font-size: 17px;
+    font-size: 16px;
+    line-height: 1.72;
   }
 
   .site-header {
@@ -664,7 +665,7 @@ hr.pagebreak {
 
   .lesson-main {
     margin-left: 0;
-    padding: 88px 20px 72px;
+    padding: 86px 18px 72px;
   }
 
   .manual-cover {
@@ -679,7 +680,7 @@ hr.pagebreak {
 
   .cover-meta-row {
     display: block;
-    margin-bottom: 34px;
+    margin-bottom: 30px;
   }
 
   .author-chip {
@@ -691,16 +692,25 @@ hr.pagebreak {
   }
 
   .title-en {
-    font-size: 44px;
+    margin-bottom: 12px;
+    font-size: 38px;
+    line-height: 0.98;
     white-space: normal;
   }
 
   .title-cn {
-    font-size: 54px;
+    font-size: 45px;
+    line-height: 1.12;
   }
 
   .cover-summary {
-    font-size: 20px;
+    font-size: 18px;
+    line-height: 1.64;
+  }
+
+  .cover-note {
+    font-size: 16px;
+    line-height: 1.72;
   }
 
   .author-card {
@@ -709,7 +719,8 @@ hr.pagebreak {
   }
 
   .chapter h2 {
-    font-size: 32px;
+    font-size: 29px;
+    line-height: 1.16;
   }
 
   .meta-grid {
