@@ -1,0 +1,12 @@
+{
+  "name": "bjtu-book",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "北京交通大学生存手册静态阅读站。",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "dev": "node tools/serve.mjs",
+    "preview": "node tools/serve.mjs dist"
+  }
+}
