@@ -1,8 +1,9 @@
-import { mkdir, readFile, writeFile, copyFile, rm } from "node:fs/promises";
+import { mkdir, readFile, writeFile, copyFile, rm, readdir } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
 const sourcePath = path.join(root, "北京交通大学生存指南", "北京交通大学生存手册_重构完整稿.md");
+const chaptersPath = path.join(root, "content", "chapters");
 const distPath = path.join(root, "dist");
 
 function slugify(text, fallback) {
@@ -230,20 +231,41 @@ function parseManual(markdown) {
     source: "北京交通大学生存指南/北京交通大学生存手册_重构完整稿.md",
     authorUrl: "https://github.com/aboutguyuan",
     projectUrl: "https://github.com/aboutguyuan/BJTU-book",
-    builtAt: new Date().toISOString(),
     chapters
   };
+}
+
+async function readManualMarkdown() {
+  try {
+    const chapterFiles = (await readdir(chaptersPath))
+      .filter((file) => file.endsWith(".md"))
+      .sort((a, b) => a.localeCompare(b, "zh-CN"));
+
+    if (chapterFiles.length) {
+      const parts = [];
+      for (const file of chapterFiles) {
+        parts.push(await readFile(path.join(chaptersPath, file), "utf8"));
+      }
+      return `# 北京交通大学生存手册\n\n${parts.join("\n\n")}`;
+    }
+  } catch {
+    // Fall back to the original single-file manuscript.
+  }
+
+  return readFile(sourcePath, "utf8");
 }
 
 await rm(distPath, { recursive: true, force: true });
 await mkdir(distPath, { recursive: true });
 
-const markdown = await readFile(sourcePath, "utf8");
+const markdown = await readManualMarkdown();
 const siteData = parseManual(markdown);
+const dataJs = `window.SITE_DATA = ${JSON.stringify(siteData)};\n`;
 
 await copyFile(path.join(root, "index.html"), path.join(distPath, "index.html"));
 await copyFile(path.join(root, "style.css"), path.join(distPath, "style.css"));
 await copyFile(path.join(root, "app.js"), path.join(distPath, "app.js"));
-await writeFile(path.join(distPath, "data.js"), `window.SITE_DATA = ${JSON.stringify(siteData)};\n`);
+await writeFile(path.join(root, "data.js"), dataJs);
+await writeFile(path.join(distPath, "data.js"), dataJs);
 
 console.log(`Built ${siteData.chapters.length} chapters into dist/`);
