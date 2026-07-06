@@ -277,7 +277,7 @@ h1 {
   display: block;
   margin-bottom: 10px;
   font-family: var(--font-display);
-  font-size: clamp(72px, 7.8vw, 126px);
+  font-size: clamp(58px, 6.3vw, 96px);
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
@@ -285,7 +285,7 @@ h1 {
 .title-cn {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(92px, 10vw, 160px);
+  font-size: clamp(72px, 7.8vw, 122px);
 }
 
 .cover-summary {
@@ -691,12 +691,12 @@ hr.pagebreak {
   }
 
   .title-en {
-    font-size: 54px;
+    font-size: 44px;
     white-space: normal;
   }
 
   .title-cn {
-    font-size: 66px;
+    font-size: 54px;
   }
 
   .cover-summary {
