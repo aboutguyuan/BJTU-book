@@ -425,7 +425,7 @@ blockquote p:last-child {
 
 .meta-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   margin: 28px 0;
   border-top: 1px solid var(--border);
@@ -459,6 +459,16 @@ blockquote p:last-child {
   color: var(--ink);
   font-family: var(--font-mono);
   font-size: 13px;
+}
+
+.meta-grid em {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  letter-spacing: 0.08em;
 }
 
 .search-box {
