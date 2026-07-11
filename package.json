@@ -5,12 +5,8 @@
   "type": "module",
   "description": "北京交通大学生存手册静态阅读站。",
   "scripts": {
-    "content:check": "node tools/check-content.mjs",
-    "export:markdown": "node tools/export-manual.mjs",
+    "chapters": "node tools/split-chapters.mjs",
     "build": "node tools/build.mjs",
-    "print:prepare": "npm run build",
-    "pdf": "npm run build && node tools/export-pdf.mjs",
-    "pdf:verify": "node tools/verify-pdf.mjs",
     "kodo:config": "node tools/kodo-config.mjs",
     "kodo:deploy": "npm run build && npm run kodo:config && qshell qupload -c 5 .qiniu/qupload.json",
     "dev": "node tools/serve.mjs",

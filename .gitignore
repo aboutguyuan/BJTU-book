@@ -1,7 +1,5 @@
 node_modules
 dist
-output/pdf
-tmp/pdfs
 .vercel
 .env
 .env.*
