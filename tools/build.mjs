@@ -1,9 +1,15 @@
-import { mkdir, readFile, writeFile, copyFile, rm, readdir } from "node:fs/promises";
+import { mkdir, writeFile, copyFile, rm } from "node:fs/promises";
 import path from "node:path";
+import {
+  assembleManualMarkdown,
+  canonicalSourceLabel,
+  exportedMarkdownName,
+  manualTitle,
+  projectRoot,
+  readChapterSources
+} from "./manual-source.mjs";
 
-const root = process.cwd();
-const sourcePath = path.join(root, "北京交通大学生存指南", "北京交通大学生存手册_重构完整稿.md");
-const chaptersPath = path.join(root, "content", "chapters");
+const root = projectRoot;
 const distPath = path.join(root, "dist");
 
 function slugify(text, fallback) {
@@ -157,12 +163,17 @@ function toText(lines) {
     .trim();
 }
 
+function stripTerminalPagebreak(html) {
+  return html.replace(/\s*<hr class="pagebreak">\s*$/, "");
+}
+
 function parseManual(markdown) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const title = lines.find((line) => line.startsWith("# "))?.replace(/^#\s+/, "").trim() || "北京交通大学生存手册";
   const chapters = [];
   let currentChapter = null;
   let currentSection = null;
+  let inPreambleComment = false;
   const usedIds = new Map();
 
   function uniqueId(base) {
@@ -185,6 +196,18 @@ function parseManual(markdown) {
 
   for (const line of lines) {
     if (line.startsWith("# ")) continue;
+
+    if (!currentChapter) {
+      const trimmed = line.trim();
+      if (inPreambleComment) {
+        if (trimmed.includes("-->")) inPreambleComment = false;
+        continue;
+      }
+      if (trimmed.startsWith("<!--") && trimmed !== "<!-- pagebreak -->") {
+        inPreambleComment = !trimmed.includes("-->");
+        continue;
+      }
+    }
 
     const h2 = line.match(/^##\s+(.+)$/);
     if (h2) {
@@ -228,45 +251,90 @@ function parseManual(markdown) {
 
   return {
     title,
-    source: "北京交通大学生存指南/北京交通大学生存手册_重构完整稿.md",
+    source: canonicalSourceLabel,
     authorUrl: "https://github.com/aboutguyuan",
     projectUrl: "https://github.com/aboutguyuan/BJTU-book",
     chapters
   };
 }
 
-async function readManualMarkdown() {
-  try {
-    const chapterFiles = (await readdir(chaptersPath))
-      .filter((file) => file.endsWith(".md"))
-      .sort((a, b) => a.localeCompare(b, "zh-CN"));
+function renderPrintDocument(siteData) {
+  const toc = siteData.chapters
+    .map((chapter) => `<li><a href="#${chapter.id}">${escapeHtml(chapter.title)}</a></li>`)
+    .join("\n");
+  const chapters = siteData.chapters
+    .map((chapter) => {
+      const sections = chapter.sections
+        .map((section, index) => [
+          `<section id="${section.id}" class="print-section">`,
+          `<h3>${escapeHtml(section.title)}</h3>`,
+          index === chapter.sections.length - 1 ? stripTerminalPagebreak(section.html) : section.html,
+          "</section>"
+        ].join("\n"))
+        .join("\n");
+      return [
+        `<article id="${chapter.id}" class="print-chapter">`,
+        `<h2>${escapeHtml(chapter.title)}</h2>`,
+        chapter.sections.length ? chapter.introHtml : stripTerminalPagebreak(chapter.introHtml),
+        sections,
+        "</article>"
+      ].join("\n");
+    })
+    .join("\n");
 
-    if (chapterFiles.length) {
-      const parts = [];
-      for (const file of chapterFiles) {
-        parts.push(await readFile(path.join(chaptersPath, file), "utf8"));
-      }
-      return `# 北京交通大学生存手册\n\n${parts.join("\n\n")}`;
-    }
-  } catch {
-    // Fall back to the original single-file manuscript.
-  }
+  return `<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="${manualTitle}打印版">
+    <title>${manualTitle}（打印版）</title>
+    <link rel="stylesheet" href="./print.css">
+  </head>
+  <body>
+    <header class="print-cover">
+      <p class="eyebrow">BJTU SURVIVAL MANUAL</p>
+      <h1>${manualTitle}</h1>
+      <p class="subtitle">非官方学生指南 · 打印版</p>
+      <p class="notice">涉及学籍、选课、成绩、毕业、推免、就业手续和校区安排等事项，请以学校、学院及辅导员的正式通知为准。</p>
+      <dl>
+        <div><dt>唯一内容源</dt><dd>${canonicalSourceLabel}</dd></div>
+        <div><dt>项目主页</dt><dd>github.com/aboutguyuan/BJTU-book</dd></div>
+      </dl>
+    </header>
+    <nav class="print-toc" aria-labelledby="print-toc-title">
+      <h2 id="print-toc-title">目录</h2>
+      <ol>${toc}</ol>
+    </nav>
+    <main>${chapters}</main>
+  </body>
+</html>
+`;
+}
 
-  return readFile(sourcePath, "utf8");
+// Validate and parse the canonical source before replacing any existing build output.
+const sources = await readChapterSources();
+const markdown = assembleManualMarkdown(sources);
+const siteData = parseManual(markdown);
+if (siteData.chapters.length !== sources.length) {
+  throw new Error(
+    `构建解析出 ${siteData.chapters.length} 章，但唯一内容源包含 ${sources.length} 个文件；构建已停止。`
+  );
 }
 
 await rm(distPath, { recursive: true, force: true });
 await mkdir(distPath, { recursive: true });
 
-const markdown = await readManualMarkdown();
-const siteData = parseManual(markdown);
 const dataJs = `window.SITE_DATA = ${JSON.stringify(siteData)};\n`;
 
 await copyFile(path.join(root, "index.html"), path.join(distPath, "index.html"));
 await copyFile(path.join(root, "style.css"), path.join(distPath, "style.css"));
+await copyFile(path.join(root, "print.css"), path.join(distPath, "print.css"));
 await copyFile(path.join(root, "app.js"), path.join(distPath, "app.js"));
 await writeFile(path.join(root, "data.js"), dataJs);
 await writeFile(path.join(distPath, "data.js"), dataJs);
+await writeFile(path.join(distPath, "print.html"), renderPrintDocument(siteData));
+await writeFile(path.join(distPath, exportedMarkdownName), markdown);
 await writeFile(path.join(distPath, ".nojekyll"), "");
 
-console.log(`Built ${siteData.chapters.length} chapters into dist/`);
+console.log(`Built ${siteData.chapters.length} canonical chapters into dist/ (site, print HTML, Markdown)`);
