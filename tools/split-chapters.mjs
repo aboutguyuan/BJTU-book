@@ -14,6 +14,7 @@ function fileSlug(text) {
 
 function chapterNumber(title, index) {
   if (/^写在前面/.test(title)) return "00";
+  if (/^序章/.test(title)) return "00-A";
   const appendix = title.match(/^附录\s*([A-Z])/i);
   if (appendix) return `90-${appendix[1].toUpperCase()}`;
   if (/^结语/.test(title)) return "99";
